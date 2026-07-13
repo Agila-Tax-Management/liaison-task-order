@@ -21,7 +21,7 @@ export function TaskOrderDetailModal({ task, onClose }: TaskOrderDetailModalProp
         const result = await deleteTaskOrder(task.id);
         if (result.success) {
           router.refresh();
-          onClose(); // Close the modal after successful deletion
+          onClose();
         } else {
           alert(result.message || "Failed to delete.");
         }
@@ -38,20 +38,30 @@ export function TaskOrderDetailModal({ task, onClose }: TaskOrderDetailModalProp
         className="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl animate-scale-in max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="border-b border-slate-200 bg-linear-to-r from-navy-700 to-navy-800 px-6 py-5 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-navy-200">
+        {/* Header with Task Name */}
+        <div className="border-b border-slate-200 bg-linear-to-r from-blue-700 to-blue-900 px-6 py-5 text-white">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium uppercase tracking-wider text-blue-200">
                 Task Order Details
               </p>
-              <p className="mt-1 font-display text-2xl font-bold tracking-wide">
+              <p className="mt-1 font-mono text-lg font-bold tracking-wide">
                 {task.taskOrderNumber}
               </p>
+              <h2 className="mt-2 text-xl font-bold leading-tight sm:text-2xl">
+                {task.taskName}
+              </h2>
+              {task.taskStatus && (
+                <div className="mt-3">
+                  <span className="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                    {task.taskStatus}
+                  </span>
+                </div>
+              )}
             </div>
             <button
               onClick={onClose}
-              className="rounded-lg p-2 text-navy-200 transition-colors hover:bg-white/10 hover:text-white"
+              className="shrink-0 rounded-lg p-2 text-blue-200 transition-colors hover:bg-white/10 hover:text-white"
               aria-label="Close"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -76,28 +86,12 @@ export function TaskOrderDetailModal({ task, onClose }: TaskOrderDetailModalProp
                 <p className="mt-1 text-sm font-medium text-slate-900">{task.location}</p>
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Task Name</p>
-                <p className="mt-1 text-sm font-medium text-slate-900">{task.taskName}</p>
-              </div>
-              <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Requested By</p>
                 <p className="mt-1 text-sm font-medium text-slate-900">{task.requestedBy}</p>
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Date Requested</p>
                 <p className="mt-1 text-sm font-medium text-slate-900">{formatDate(task.dateRequested)}</p>
-              </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Status</p>
-                <p className="mt-1">
-                  {task.taskStatus ? (
-                    <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">
-                      {task.taskStatus}
-                    </span>
-                  ) : (
-                    <span className="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-200">Open</span>
-                  )}
-                </p>
               </div>
             </div>
           </div>
@@ -127,28 +121,6 @@ export function TaskOrderDetailModal({ task, onClose }: TaskOrderDetailModalProp
               </div>
             </>
           )}
-
-          {/* ClickUp Status */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">ClickUp Status</h3>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              {task.clickupUpdated ? (
-                <div className="flex items-center gap-2 text-emerald-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-sm font-medium">Click Up Updated</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-orange-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-sm font-medium">Not yet updated in ClickUp</span>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
 
         {/* Footer */}
