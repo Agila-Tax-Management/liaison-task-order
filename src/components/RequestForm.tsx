@@ -91,7 +91,8 @@ export function RequestForm({ onClose }: RequestFormProps) {
             </div>
           )}
 
-          <form action={handleSubmit} className="space-y-5">
+          {/* ADDED id="request-form" HERE so the submit button can connect to it */}
+          <form action={handleSubmit} className="space-y-5" id="request-form">
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
                 <label htmlFor="clientName" className="label-text">
@@ -212,7 +213,7 @@ export function RequestForm({ onClose }: RequestFormProps) {
           </button>
           <button 
             type="submit" 
-            form="request-form" // Connects to the form above
+            form="request-form" // Now correctly connects to the form above
             className="btn-primary" 
             disabled={isPending}
           >
