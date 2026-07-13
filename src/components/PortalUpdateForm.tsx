@@ -8,9 +8,10 @@ import { PortalSuccessDialog } from "./PortalSuccessDialog";
 
 interface PortalUpdateFormProps {
   taskOrder: TaskOrderSerialized;
+  onSuccess?: () => void;
 }
 
-export function PortalUpdateForm({ taskOrder }: PortalUpdateFormProps) {
+export function PortalUpdateForm({ taskOrder, onSuccess }: PortalUpdateFormProps) {
   const [selectedStatus, setSelectedStatus] = useState<StatusOption | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -33,6 +34,11 @@ export function PortalUpdateForm({ taskOrder }: PortalUpdateFormProps) {
       const result = await updateTaskOrderStatus(formData);
       if (result.success && result.taskOrderNumber) {
         setSuccessNumber(result.taskOrderNumber);
+        
+        // Wait 2.5 seconds so the user sees the success dialog, then close the modal
+        if (onSuccess) {
+          setTimeout(() => onSuccess(), 2500);
+        }
       } else if (result.errors) {
         setErrors(result.errors);
       } else if (result.message) {
@@ -47,7 +53,7 @@ export function PortalUpdateForm({ taskOrder }: PortalUpdateFormProps) {
 
   return (
     <div>
-      <h3 className="mb-4 text-base font-bold text-navy-900">
+      <h3 className="mb-4 text-base font-bold text-blue-900">
         Update Task Order Status
       </h3>
 
