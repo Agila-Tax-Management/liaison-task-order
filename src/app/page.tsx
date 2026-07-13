@@ -1,6 +1,7 @@
 import { PortalSearch } from "@/components/PortalSearch";
 import Link from "next/link";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export default function PortalPage() {
@@ -19,7 +20,7 @@ export default function PortalPage() {
         </Link>
       </div>
 
-      {/* Branding - Blue/Purple Gradient Text */}
+      {/* Branding */}
       <div className="text-center mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold bg-linear-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">
           Agila Task Portal

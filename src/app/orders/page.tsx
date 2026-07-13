@@ -3,6 +3,7 @@ import { PageClient } from "@/app/page-client";
 import { serializeTaskOrder } from "@/lib/utils";
 import Link from "next/link";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export default async function OrdersPage() {
@@ -23,7 +24,6 @@ export default async function OrdersPage() {
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Header with Navigation */}
         <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          {/* Back to Portal Button */}
           <Link 
             href="/" 
             className="inline-flex items-center gap-2 rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 transition-colors border border-blue-200"
@@ -35,7 +35,7 @@ export default async function OrdersPage() {
           </Link>
         </div>
 
-        {/* Branding - Blue/Purple Gradient Text */}
+        {/* Branding */}
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-bold bg-linear-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent sm:text-4xl">
             Agila Liaison Task Order
