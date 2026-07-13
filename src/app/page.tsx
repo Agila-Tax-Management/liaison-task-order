@@ -7,16 +7,16 @@ export const dynamic = "force-dynamic";
 export default function PortalPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Back Button */}
+      {/* Create Task Order Link */}
       <div className="mb-6">
         <Link 
           href="/orders" 
           className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-700 transition-colors"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          Back to Task Orders
+          Create a Task Order
         </Link>
       </div>
 
