@@ -123,7 +123,7 @@ export function PortalSearch() {
       {/* Task Order Details */}
       {taskOrder && (
         <div className="card overflow-hidden">
-          <div className="border-b border-slate-200 bg-gradient-to-r from-navy-700 to-navy-800 px-6 py-5 text-white">
+          <div className="border-b border-slate-200 bg-linear-to-r from-navy-700 to-navy-800 px-6 py-5 text-white">
             <p className="text-xs font-medium uppercase tracking-wider text-navy-200">
               Task Order Found
             </p>
