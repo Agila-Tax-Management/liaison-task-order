@@ -4,6 +4,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Agila Liaison Internal",
   description: "Task Order Management System",
+  icons: {
+    icon: "/images/icon.webp",
+    shortcut: "/images/icon.webp",
+    apple: "/images/icon.webp",
+  },
 };
 
 export default function RootLayout({
