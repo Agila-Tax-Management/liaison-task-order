@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import type { TaskOrderSerialized, StatusOption } from "@/types";
 import { updateTaskOrderStatus } from "@/app/actions/task-order.actions";
 import { StatusSelector } from "./StatusSelector";
@@ -11,40 +12,67 @@ interface PortalUpdateFormProps {
   onSuccess?: () => void;
 }
 
+// Dedicated submit button to use useFormStatus
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button type="submit" className="btn-primary" disabled={pending}>
+      {pending ? (
+        <>
+          <svg className="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+          Saving...
+        </>
+      ) : (
+        <>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+          </svg>
+          Save Update
+        </>
+      )}
+    </button>
+  );
+}
+
 export function PortalUpdateForm({ taskOrder, onSuccess }: PortalUpdateFormProps) {
   const [selectedStatus, setSelectedStatus] = useState<StatusOption | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [successNumber, setSuccessNumber] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
 
-  function handleSubmit(formData: FormData) {
+  // Make this async so React 19 handles the form submission lifecycle perfectly
+  async function handleSubmit(formData: FormData) {
     setErrors({});
     setServerError(null);
 
-    if (!selectedStatus) {
+    // Ensure we get the status from the form data or fallback to state
+    const status = (formData.get("taskStatus") as string) || selectedStatus;
+    
+    if (!status) {
       setErrors({ taskStatus: "Please select a status" });
       return;
     }
 
-    formData.set("taskStatus", selectedStatus);
+    // Explicitly set the values to guarantee they are sent
+    formData.set("taskStatus", status);
     formData.set("taskOrderNumber", taskOrder.taskOrderNumber);
 
-    startTransition(async () => {
-      const result = await updateTaskOrderStatus(formData);
-      if (result.success && result.taskOrderNumber) {
-        setSuccessNumber(result.taskOrderNumber);
-        
-        // Wait 2.5 seconds so the user sees the success dialog, then close the modal
-        if (onSuccess) {
-          setTimeout(() => onSuccess(), 2500);
-        }
-      } else if (result.errors) {
-        setErrors(result.errors);
-      } else if (result.message) {
-        setServerError(result.message);
+    // Await the server action directly
+    const result = await updateTaskOrderStatus(formData);
+    
+    if (result.success && result.taskOrderNumber) {
+      setSuccessNumber(result.taskOrderNumber);
+      if (onSuccess) {
+        setTimeout(() => onSuccess(), 2000); // Close modal after 2 seconds
       }
-    });
+    } else if (result.errors) {
+      setErrors(result.errors);
+    } else if (result.message) {
+      setServerError(result.message);
+    }
   }
 
   if (successNumber) {
@@ -109,51 +137,7 @@ export function PortalUpdateForm({ taskOrder, onSuccess }: PortalUpdateFormProps
             </div>
 
             <div className="flex justify-end border-t border-slate-200 pt-5">
-              <button type="submit" className="btn-primary" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <svg
-                      className="h-4 w-4 animate-spin"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                      />
-                    </svg>
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
-                      />
-                    </svg>
-                    Save Update
-                  </>
-                )}
-              </button>
+              <SubmitButton />
             </div>
           </>
         )}

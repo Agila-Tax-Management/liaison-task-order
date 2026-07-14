@@ -135,7 +135,7 @@ export async function createTaskOrder(
     });
 
     revalidatePath("/");
-    revalidatePath("/portal");
+    revalidatePath("/orders");
 
     return {
       success: true,
@@ -191,7 +191,7 @@ export async function updateTaskOrderStatus(
     });
 
     revalidatePath("/");
-    revalidatePath("/portal");
+    revalidatePath("/orders");
 
     return {
       success: true,
@@ -213,7 +213,7 @@ export async function deleteTaskOrder(id: number): Promise<{ success: boolean; m
     });
 
     revalidatePath("/");
-    revalidatePath("/portal");
+    revalidatePath("/orders");
 
     return { success: true };
   } catch (error) {
