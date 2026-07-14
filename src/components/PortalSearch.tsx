@@ -1,20 +1,17 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { TaskOrderSerialized } from "@/types";
-import { formatDate } from "@/lib/utils";
-import { PortalUpdateForm } from "./PortalUpdateForm";
+import { useRouter } from "next/navigation";
 
 export function PortalSearch() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
-  const [taskOrder, setTaskOrder] = useState<TaskOrderSerialized | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setTaskOrder(null);
 
     const trimmed = query.trim();
     if (!trimmed) {
@@ -32,18 +29,13 @@ export function PortalSearch() {
           setError(data.error ?? "Task Order not found.");
           return;
         }
-        const data: TaskOrderSerialized = await res.json();
-        setTaskOrder(data);
+        const data = await res.json();
+        // Navigate to the task detail page
+        router.push(`/portal/${data.taskOrderNumber}`);
       } catch {
         setError("Network error. Please try again.");
       }
     });
-  }
-
-  function clearSearch() {
-    setQuery("");
-    setTaskOrder(null);
-    setError(null);
   }
 
   return (
@@ -134,98 +126,6 @@ export function PortalSearch() {
           </div>
         )}
       </div>
-
-      {/* Task Order Details Modal */}
-      {taskOrder && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-fade-in"
-          onClick={clearSearch}
-        >
-          <div
-            className="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl animate-scale-in max-h-[90vh] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="border-b border-slate-200 bg-linear-to-r from-blue-700 to-blue-900 px-6 py-5 text-white shrink-0">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium uppercase tracking-wider text-blue-200">
-                    Task Order Found
-                  </p>
-                  <p className="mt-1 font-mono text-lg font-bold tracking-wide">
-                    {taskOrder.taskOrderNumber}
-                  </p>
-                  <h2 className="mt-2 text-xl font-bold leading-tight sm:text-2xl">
-                    {taskOrder.taskName}
-                  </h2>
-                  {taskOrder.taskStatus && (
-                    <div className="mt-3">
-                      <span className="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                        {taskOrder.taskStatus}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <button
-                  onClick={clearSearch}
-                  className="shrink-0 rounded-lg p-2 text-blue-200 transition-colors hover:bg-white/10 hover:text-white"
-                  aria-label="Close"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Body (Scrollable) */}
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <DetailRow label="Client Name" value={taskOrder.clientName} />
-                <DetailRow label="Location" value={taskOrder.location} />
-                <DetailRow label="Requested By" value={taskOrder.requestedBy} />
-                <DetailRow
-                  label="Date Requested"
-                  value={formatDate(taskOrder.dateRequested)}
-                />
-                <div className="sm:col-span-2">
-                  <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    To Do (Detailed Instructions)
-                  </p>
-                  <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
-                    {taskOrder.todo}
-                  </div>
-                </div>
-              </div>
-
-              {/* Update Form Section */}
-              <div className="mt-8 border-t border-slate-200 pt-6">
-                <h3 className="mb-4 text-base font-bold text-slate-900">
-                  Update Task Status
-                </h3>
-                <PortalUpdateForm taskOrder={taskOrder} onSuccess={clearSearch} />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function DetailRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div>
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
-        {label}
-      </p>
-      <p className="text-sm font-medium text-slate-900">{value}</p>
     </div>
   );
 }
