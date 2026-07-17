@@ -12,12 +12,14 @@ export default async function OrdersPage() {
       orderBy: { createdAt: "desc" },
     });
 
+    // Closed: ANY task that has been updated (has a taskStatus)
     const closedTaskOrders = allTaskOrders
-      .filter((t) => t.taskStatus === "Done, forwarded to CRT")
+      .filter((t) => t.taskStatus !== null && t.taskStatus !== "")
       .map(serializeTaskOrder);
 
+    // Open: Only tasks with NO updates (no taskStatus)
     const openTaskOrders = allTaskOrders
-      .filter((t) => t.taskStatus !== "Done, forwarded to CRT")
+      .filter((t) => t.taskStatus === null || t.taskStatus === "")
       .map(serializeTaskOrder);
 
     return (
